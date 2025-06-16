@@ -8,14 +8,14 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
-    volumes:
-      - .:/app
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
       - redis
-    command: uvicorn app.main:app --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - app-network
 
   # Spring Boot 서비스
   springboot:
@@ -84,6 +84,8 @@ services:
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes
+    networks:
+      - app-network
 
 networks:
   app-network:
