@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  # FastAPI 서비스
+  # api:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8000:8000"
+  #   volumes:
+  #     - .:/app
+  #   environment:
+  #     - REDIS_HOST=redis
+  #     - REDIS_PORT=6379
+  #   depends_on:
+  #     - redis
+  #   command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Spring Boot 서비스
+  springboot:
+    build:
+      context: .
+      dockerfile: springboot.Dockerfile
+    container_name: moard-api
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/moard?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=moard
+      - SPRING_DATASOURCE_PASSWORD=moard1234
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  # # React 서비스
+  # react:
+  #   build:
+  #     context: .
+  #     dockerfile: react.Dockerfile
+  #   container_name: moard-ui
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - REACT_APP_API_URL=http://localhost:8080
+  #   depends_on:
+  #     - springboot
+  #   networks:
+  #     - app-network
+
+  # MySQL 서비스
+  mysql:
+    image: mysql:8.0
+    container_name: moard-mysql
+    environment:
+      - MYSQL_DATABASE=moard
+      - MYSQL_USER=moard
+      - MYSQL_PASSWORD=moard1234
+      - MYSQL_ROOT_PASSWORD=root1234
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  # Redis 서비스
+  # redis:
+  #   image: redis:7-alpine
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis_data:/data
+  #   command: redis-server --appendonly yes
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  redis_data: 
