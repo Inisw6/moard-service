@@ -1,8 +1,10 @@
 # moard-service
 
 ## 개요
-이 프로젝트는 **강화학습 추천시스템의 서비스 제공**을 위한 프로젝트입니다. 
+이 프로젝트는 **강화학습 추천시스템의 서비스 제공**을 통합 docker compose를 제공하는 프로젝트입니다. 
 사용자에게 개인화된 콘텐츠를 추천하는 기능을 제공하며, FastAPI, Spring Boot, React를 사용한 마이크로서비스 아키텍처로 구성되어 있습니다.
+
+<img width="608" alt="스크린샷 2025-06-17 오후 3 32 54" src="https://github.com/user-attachments/assets/1fdf5b90-cd1a-498e-bc0b-54785069e04a" />
 
 ## 환경
 - FastAPI (Python)
